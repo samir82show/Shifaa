@@ -72,10 +72,10 @@ public class Area implements Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 11 * hash + Objects.hashCode(this.id);
-        hash = 11 * hash + Objects.hashCode(this.name);
-        hash = 11 * hash + Objects.hashCode(this.clinics);
+        int hash = 5;
+        hash = 83 * hash + Objects.hashCode(this.id);
+        hash = 83 * hash + Objects.hashCode(this.name);
+        hash = 83 * hash + Objects.hashCode(this.clinics);
         return hash;
     }
 
@@ -105,7 +105,8 @@ public class Area implements Serializable {
 
     @Override
     public String toString() {
-        return name;
+        return "Area{" + "name=" + name + '}';
     }
+    
 
 }

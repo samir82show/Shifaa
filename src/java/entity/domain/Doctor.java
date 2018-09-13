@@ -4,6 +4,7 @@
 package entity.domain;
 
 import java.io.Serializable;
+import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -77,8 +78,33 @@ public class Doctor implements Serializable {
     }
 
     @Override
-    public String toString() {
-        return name + ':' + id;
+    public int hashCode() {
+        int hash = 7;
+        hash = 13 * hash + Objects.hashCode(this.id);
+        return hash;
     }
-    
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Doctor other = (Doctor) obj;
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Doctor{" + "id=" + id + ", name=" + name + ", image=" + image + ", qualifications=" + qualifications + ", clinic=" + clinic + '}';
+    }
+
 }

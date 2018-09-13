@@ -3,13 +3,8 @@ package entity.domain;
 import entity.domain.util.JsfUtil;
 import entity.domain.util.PaginationHelper;
 import facade.ClinicServiceFacade;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.ResourceBundle;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -21,14 +16,11 @@ import javax.faces.convert.FacesConverter;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
-import javax.mail.MessagingException;
-import javax.servlet.http.Part;
 
 @Named("clinicServiceController")
 @SessionScoped
 public class ClinicServiceController implements Serializable {
 
-    private Part image;
     private ClinicService current;
     private DataModel items = null;
     @EJB
@@ -37,37 +29,6 @@ public class ClinicServiceController implements Serializable {
     private int selectedItemIndex;
 
     public ClinicServiceController() {
-    }
-
-    public Part getImage() {
-        return image;
-    }
-
-    public void setImage(Part image) {
-        this.image = image;
-    }
-
-    public int doUpload() throws MessagingException {
-        if (!image.getSubmittedFileName().equals("")) {
-            String fileFullPath = "C:\\Users\\sawad\\Documents\\NetBeansProjects\\Shifaa\\web\\resources\\images\\services\\" + new SimpleDateFormat("yyyyMMddHHmmssSSS")
-                    .format(new Date()) + image.getSubmittedFileName();
-            try {
-                InputStream inputStream = image.getInputStream();
-                File file = new File(fileFullPath);
-                file.createNewFile();
-                FileOutputStream fileOutputStream = new FileOutputStream(file);
-                byte[] buffer = new byte[4096];
-                int length;
-                while ((length = inputStream.read(buffer)) > 0) {
-                    fileOutputStream.write(buffer, 0, length);
-                }
-            } catch (Exception e) {
-                System.out.println("Unable to save file due to ......." + e.getMessage());
-                return 1;
-            }
-            current.setImage(fileFullPath);
-        }
-        return 0;
     }
 
     public ClinicService getSelected() {
@@ -117,20 +78,15 @@ public class ClinicServiceController implements Serializable {
         return "Create";
     }
 
-    public String create() throws MessagingException {
-        if (0 == doUpload()) {
-            try {
-                getFacade().create(current);
-                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ClinicServiceCreated"));
-                return prepareCreate();
-            } catch (Exception e) {
-                JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
-                return null;
-            }
-        } else {
-            System.out.println("create function ........... Service is not added.");
+    public String create() {
+        try {
+            getFacade().create(current);
+            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ClinicServiceCreated"));
+            return prepareCreate();
+        } catch (Exception e) {
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
+            return null;
         }
-        return "failed_to_create";
     }
 
     public String prepareEdit() {
@@ -174,10 +130,6 @@ public class ClinicServiceController implements Serializable {
 
     private void performDestroy() {
         try {
-            if (current.getImage() != null) {
-                System.out.println("Deleting " + current.getImage().replace("\\", "\\\\") + ".");
-                new File(current.getImage().replace("\\", "\\\\")).delete();
-            }
             getFacade().remove(current);
             JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ClinicServiceDeleted"));
         } catch (Exception e) {

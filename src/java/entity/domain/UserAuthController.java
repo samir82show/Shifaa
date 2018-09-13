@@ -1,13 +1,14 @@
 package entity.domain;
 
-import entity.domain.util.EncryptPassword;
 import entity.domain.util.JsfUtil;
 import entity.domain.util.PaginationHelper;
+import entity.util.EncryptPassword;
 import facade.GroupAuthFacade;
 import facade.UserAuthFacade;
 
 import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import javax.ejb.EJB;
@@ -25,10 +26,9 @@ import javax.faces.model.SelectItem;
 @SessionScoped
 public class UserAuthController implements Serializable {
 
+    private List<String> groups;
     @EJB
     private GroupAuthFacade groupAuthFacade;
-
-    private List<String> groupIds;
     private UserAuth current;
     private DataModel items = null;
 
@@ -37,15 +37,15 @@ public class UserAuthController implements Serializable {
     private PaginationHelper pagination;
     private int selectedItemIndex;
 
+    public List<String> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(List<String> groups) {
+        this.groups = groups;
+    }
+
     public UserAuthController() {
-    }
-
-    public List<String> getGroupIds() {
-        return groupIds;
-    }
-
-    public void setGroupIds(List<String> groupIds) {
-        this.groupIds = groupIds;
     }
 
     public UserAuth getSelected() {
@@ -68,6 +68,7 @@ public class UserAuthController implements Serializable {
                 public int getItemsCount() {
                     return getFacade().count();
                 }
+
                 @Override
                 public DataModel createPageDataModel() {
                     return new ListDataModel(getFacade().findRange(new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}));
@@ -89,15 +90,19 @@ public class UserAuthController implements Serializable {
     }
 
     public String prepareCreate() {
+        groups = new ArrayList<>();
         current = new UserAuth();
         selectedItemIndex = -1;
         return "Create";
     }
 
     public String create() throws NoSuchAlgorithmException {
-        for (String id : groupIds) {
-            GroupAuth groupAuth = groupAuthFacade.find(Long.parseLong(id));
-            current.addGroupAuth(groupAuth);
+        if (!groups.isEmpty()) {
+            System.out.println("create......................" + groups);
+            for (String id : groups) {
+                GroupAuth groupAuth = groupAuthFacade.find(Long.parseLong(id));
+                current.addGroupAuth(groupAuth);
+            }
         }
         current.setPassword(new EncryptPassword().encrypt("MD5", current.getPassword()));
         try {
@@ -112,11 +117,23 @@ public class UserAuthController implements Serializable {
 
     public String prepareEdit() {
         current = (UserAuth) getItems().getRowData();
+        groups = new ArrayList<>();
+        for (GroupAuth g : current.getGroupAuths()) {
+            System.out.println(g.getGroupname());
+            groups.add(g.getId().toString());
+        }
+        current.setGroupAuths(current.getGroupAuths());
         selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
         return "Edit";
     }
 
-    public String update() {
+    public String update() throws NoSuchAlgorithmException {
+        current.getGroupAuths().clear();
+        for (String id : groups) {
+            GroupAuth groupAuth = groupAuthFacade.find(Long.parseLong(id));
+            current.addGroupAuth(groupAuth);
+        }
+        current.setPassword(new EncryptPassword().encrypt("MD5", current.getPassword()));
         try {
             getFacade().edit(current);
             JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("UserAuthUpdated"));

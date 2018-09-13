@@ -16,6 +16,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+/**
+ * @author sawad
+ */
 @Entity
 public class Clinic implements Serializable {
 
@@ -35,6 +38,9 @@ public class Clinic implements Serializable {
     @ManyToOne
     private Area area;
 
+    public Clinic() {
+    }
+
     @OneToMany(mappedBy = "clinic")
     private List<Doctor> doctors;
 
@@ -43,9 +49,6 @@ public class Clinic implements Serializable {
 
     @ManyToMany
     private List<Insurance> insurances;
-
-    public Clinic() {
-    }
 
     public Long getId() {
         return this.id;
@@ -152,15 +155,8 @@ public class Clinic implements Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 53 * hash + Objects.hashCode(this.id);
-        hash = 53 * hash + Objects.hashCode(this.name);
-        hash = 53 * hash + Objects.hashCode(this.phones);
-        hash = 53 * hash + Objects.hashCode(this.image);
-        hash = 53 * hash + Objects.hashCode(this.area);
-        hash = 53 * hash + Objects.hashCode(this.doctors);
-        hash = 53 * hash + Objects.hashCode(this.clinicServices);
-        hash = 53 * hash + Objects.hashCode(this.insurances);
+        int hash = 7;
+        hash = 67 * hash + Objects.hashCode(this.id);
         return hash;
     }
 
@@ -176,28 +172,7 @@ public class Clinic implements Serializable {
             return false;
         }
         final Clinic other = (Clinic) obj;
-        if (!Objects.equals(this.name, other.name)) {
-            return false;
-        }
-        if (!Objects.equals(this.phones, other.phones)) {
-            return false;
-        }
-        if (!Objects.equals(this.image, other.image)) {
-            return false;
-        }
         if (!Objects.equals(this.id, other.id)) {
-            return false;
-        }
-        if (!Objects.equals(this.area, other.area)) {
-            return false;
-        }
-        if (!Objects.equals(this.doctors, other.doctors)) {
-            return false;
-        }
-        if (!Objects.equals(this.clinicServices, other.clinicServices)) {
-            return false;
-        }
-        if (!Objects.equals(this.insurances, other.insurances)) {
             return false;
         }
         return true;
@@ -205,7 +180,7 @@ public class Clinic implements Serializable {
 
     @Override
     public String toString() {
-        return name + ":" + area;
+        return "Clinic{" + "name=" + name + '}';
     }
 
 }

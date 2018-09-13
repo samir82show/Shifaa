@@ -7,8 +7,10 @@
         <h:outputStylesheet name="css/jsfcrud.css"/>
     </h:head>
     <h:body>
-        Hello #{userAuthController.username}
-        <br />
+        Welcome #{loginController.username}
+        <h:form>
+            <h:commandButton action="#{userAuthController.logout()}" value="Logout"/>
+        </h:form>
         <br />
         <h:link outcome="/area/List" value="Show All Area Items"/>
         <br />
@@ -23,10 +25,28 @@
         <h:link outcome="/insurance/List" value="Show All Insurance Items"/>
         <br />
         <h:link outcome="/userAuth/List" value="Show All UserAuth Items"/>
-        <h:form>
-            <h:commandButton action="#{userAuthController.logout()}" value="Logout"/>
-        </h:form>
     </h:body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 </html>
 

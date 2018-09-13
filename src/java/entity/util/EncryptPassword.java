@@ -1,5 +1,4 @@
-package entity.domain.util;
-
+package entity.util;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -16,7 +15,22 @@ import java.security.NoSuchAlgorithmException;
  */
 public class EncryptPassword {
 
-    public String encrypt (String algorithm, String password) throws NoSuchAlgorithmException {
+    public static void main(String arg[]) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        md.update("123".getBytes());
+
+        byte byteData[] = md.digest();
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < byteData.length; i++) {
+            sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
+        }
+
+        System.out.println(sb.toString());
+
+    }
+
+    public String encrypt(String algorithm, String password) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance(algorithm);
         md.update(password.getBytes());
 
